@@ -26,16 +26,20 @@ impl StringCalculator {
         }
 
 
-        let negatives = v.iter().filter(|x| x.is_negative()).collect::<Vec<&i32>>();
-        if negatives.iter().count() > 0 {
-            panic!("negatives not allowed, received: {:?}", negatives);
-        }
+        &self.check_negatives(&v);
 
         v.iter().sum()
     }
 
     fn has_custom_delimiter(&self, numbers: &str) -> bool {
         &numbers.len() > &1 && &numbers[..2] == "//"
+    }
+
+    fn check_negatives(&self, v: &Vec<i32>) {
+        let negatives = v.iter().filter(|x| x.is_negative()).collect::<Vec<&i32>>();
+        if negatives.iter().count() > 0 {
+            panic!("negatives not allowed, received: {:?}", negatives);
+        } 
     }
 }
 
@@ -86,4 +90,11 @@ mod tests {
         sc.add("1,-1".to_string());
     }
     
+    #[test]
+    #[should_panic(expected="negatives not allowed, received: [-1, -2, -3]")]
+    fn throws_exception_on_multiple_negative_numbers() {
+        let sc = StringCalculator {};
+        sc.add("1,-1,2,-2,-3,4".to_string());
+    } 
+        
 }
