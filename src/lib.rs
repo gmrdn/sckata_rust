@@ -25,6 +25,12 @@ impl StringCalculator {
                 .collect();
         }
 
+
+        let negatives = v.iter().filter(|x| x.is_negative()).collect::<Vec<&i32>>();
+        if negatives.iter().count() > 0 {
+            panic!("negatives not allowed, received: {:?}", negatives);
+        }
+
         v.iter().sum()
     }
 
@@ -72,4 +78,12 @@ mod tests {
         let sc = StringCalculator {};
         assert_eq!(sc.add("//;\n1;2".to_string()), 3);
     }
+
+    #[test]
+    #[should_panic(expected="negatives not allowed, received: [-1]")]
+    fn throws_exception_on_negative_number() {
+        let sc = StringCalculator {};
+        sc.add("1,-1".to_string());
+    }
+    
 }
