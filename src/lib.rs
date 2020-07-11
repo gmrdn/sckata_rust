@@ -6,12 +6,30 @@ impl StringCalculator {
             return 0;
         }
 
-        let v: Vec<i32> = numbers
-            .split(|c| c == ',' || c == '\n')
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect();
+        let v: Vec<i32>;
+
+        if self.has_custom_delimiter(&numbers) {
+            let delim_and_nb: Vec<&str> = numbers.split('\n').collect();
+            let custom_delimiter: String = delim_and_nb[0][2..].to_string();
+            let numbers_to_add = delim_and_nb[1];
+
+            v = numbers_to_add
+                .split(&custom_delimiter)
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect();
+        } else {
+            let delimiters = vec![',', '\n'];
+            v = numbers
+                .split(|c| delimiters.contains(&c))
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect();
+        }
 
         v.iter().sum()
+    }
+
+    fn has_custom_delimiter(&self, numbers: &str) -> bool {
+        &numbers.len() > &1 && &numbers[..2] == "//"
     }
 }
 
@@ -47,5 +65,11 @@ mod tests {
     fn adding_numbers_with_newline_separator() {
         let sc = StringCalculator {};
         assert_eq!(sc.add("1\n2,3".to_string()), 6);
+    }
+
+    #[test]
+    fn changing_the_delimiter() {
+        let sc = StringCalculator {};
+        assert_eq!(sc.add("//;\n1;2".to_string()), 3);
     }
 }
