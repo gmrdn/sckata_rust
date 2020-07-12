@@ -31,7 +31,8 @@ impl StringCalculator {
 
         self.check_negatives(&v);
 
-        v.iter().sum()
+
+        v.iter().filter(|x| **x <= 1000).sum()
     }
 
     pub fn get_called_count(&self) -> i32 {
@@ -121,4 +122,13 @@ mod tests {
         sc.add("//;\n1;2".to_string());
         assert_eq!(sc.get_called_count(), 2);
     }
+    
+    #[test]
+    fn should_ignore_numbers_greater_than_1000() {
+        let mut sc = init();
+        assert_eq!(sc.add("1,1000".to_string()), 1001);
+        assert_eq!(sc.add("1,1001".to_string()), 1);
+    }
+    
+    
 }
